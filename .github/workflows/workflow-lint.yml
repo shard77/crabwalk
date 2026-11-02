@@ -1,0 +1,35 @@
+name: Workflow lint
+
+on:
+  push:
+    branches: ["main", "dev/*"]
+    paths:
+      - ".github/workflows/**"
+      - ".github/actionlint.*"
+      - "flake.nix"
+      - "flake.lock"
+  pull_request:
+    branches: ["main", "dev/*"]
+    paths:
+      - ".github/workflows/**"
+      - ".github/actionlint.*"
+      - "flake.nix"
+      - "flake.lock"
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  actionlint:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: cachix/install-nix-action@v31
+
+      - name: Check workflow syntax
+        run: nix develop --command actionlint

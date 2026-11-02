@@ -1,0 +1,30 @@
+name: Conventional Commits
+
+on:
+  # Commit messages must be checked even for documentation-only changes.
+  push:
+    branches: ["main", "dev/*"]
+  pull_request:
+    branches: ["main", "dev/*"]
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  conventional-commits:
+    name: Cocogitto - Conventional Commits
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          # Validate the PR's actual history, excluding GitHub's synthetic merge.
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: cachix/install-nix-action@v31
+
+      - name: Check full commit history with Cocogitto
+        run: nix develop --command cog check

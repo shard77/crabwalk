@@ -15,8 +15,17 @@ jobs:
   checks:
     uses: ./.github/workflows/nix-rust-build.yml
 
+  conventional-commits:
+    uses: ./.github/workflows/conventional-commits.yml
+
+  nix:
+    uses: ./.github/workflows/nix-checks.yml
+
+  workflow-lint:
+    uses: ./.github/workflows/workflow-lint.yml
+
   build:
-    needs: checks
+    needs: [checks, conventional-commits, nix, workflow-lint]
     strategy:
       fail-fast: false
       matrix:
