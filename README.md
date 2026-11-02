@@ -10,11 +10,17 @@ crabwalk helps you find PRs that have gone quiet, catch up on the discussion, an
 
 ## Installation
 
+### Build via cargo
+
 Requires Rust 1.98 or newer.
 
 ```bash
 cargo install --locked --git https://github.com/shard77/crabwalk
 ```
+
+### Download pre-built binaries 
+
+You can grab compiled binaries from the [release](https://github.com/shard77/crabwalk/releases) page. 
 
 ## Usage
 
