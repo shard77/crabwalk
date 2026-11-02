@@ -1,0 +1,46 @@
+name: Nix - Rust build
+
+on:
+  push:
+    branches: ["main", "dev/*"]
+    paths:
+      - "src/**"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - "flake.nix"
+      - "flake.lock"
+      - ".github/workflows/nix-rust-build.yml"
+  pull_request:
+    branches: ["main", "dev/*"]
+    paths:
+      - "src/**"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - "flake.nix"
+      - "flake.lock"
+      - ".github/workflows/nix-rust-build.yml"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+      - uses: cachix/install-nix-action@v31
+
+      - name: Validate flake
+        run: nix flake check --all-systems --no-build
+
+      - name: Check Nix formatting
+        run: nix develop --command nixfmt --check flake.nix
+
+      - name: Run rustfmt
+        run: nix develop --command cargo fmt --all -- --check
+
+      - name: Run linter
+        run: nix develop --command cargo clippy --all-targets --all -- -D warnings
+
+      - name: Build project
+        run: nix develop --command cargo build --verbose
+
+      - name: Generate documentation
+        run: nix develop --command cargo doc --no-deps --document-private-items
