@@ -1,34 +1,48 @@
-name: Nix - Rust build
+name: Nix - Rust checks and Conventional Commits
 
 on:
   push:
     branches: ["main", "dev/*"]
-    paths:
-      - "src/**"
-      - "Cargo.toml"
-      - "Cargo.lock"
-      - "flake.nix"
-      - "flake.lock"
-      - ".github/workflows/nix-rust-build.yml"
   pull_request:
     branches: ["main", "dev/*"]
-    paths:
-      - "src/**"
-      - "Cargo.toml"
-      - "Cargo.lock"
-      - "flake.nix"
-      - "flake.lock"
-      - ".github/workflows/nix-rust-build.yml"
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  conventional-commits:
+    name: Cocogitto - Conventional Commits
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          # Validate the PR's actual history, excluding GitHub's synthetic merge.
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: cachix/install-nix-action@v31
+
+      - name: Check full commit history with Cocogitto
+        run: nix develop --command cog check
+
+  checks:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
 
     steps:
       - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
       - uses: cachix/install-nix-action@v31
 
       - name: Validate flake
         run: nix flake check --all-systems --no-build
+
+      - name: Check workflow syntax
+        run: nix develop --command actionlint
 
       - name: Check Nix formatting
         run: nix develop --command nixfmt --check flake.nix
@@ -37,10 +51,12 @@ jobs:
         run: nix develop --command cargo fmt --all -- --check
 
       - name: Run linter
-        run: nix develop --command cargo clippy --all-targets --all -- -D warnings
+        run: nix develop --command cargo clippy --locked --workspace --all-targets --all-features -- -D warnings
 
-      - name: Build project
-        run: nix develop --command cargo build --verbose
+      - name: Run tests and doctests
+        run: nix develop --command cargo test --locked --workspace --all-features
 
       - name: Generate documentation
-        run: nix develop --command cargo doc --no-deps --document-private-items
+        env:
+          RUSTDOCFLAGS: -D warnings
+        run: nix develop --command cargo doc --locked --workspace --all-features --no-deps --document-private-items

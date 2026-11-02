@@ -1,0 +1,26 @@
+branch_whitelist = ["main"]
+tag_prefix = "v"
+ignore_merge_commits = false
+ignore_fixup_commits = false
+from_latest_tag = false
+skip_ci = ""
+pre_bump_hooks = [
+  "cog check",
+  "cargo test --locked --workspace --all-features",
+  "cargo set-version {{version}}",
+  "cargo check --workspace",
+  "git add Cargo.toml Cargo.lock",
+]
+post_bump_hooks = []
+
+[commit_types.init]
+changelog_title = "Initial setup"
+bump_patch = false
+bump_minor = false
+
+[changelog]
+path = "CHANGELOG.md"
+template = "remote"
+remote = "github.com"
+owner = "shard77"
+repository = "crabwalk"

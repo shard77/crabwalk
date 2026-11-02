@@ -13,7 +13,7 @@ crabwalk helps you find PRs that have gone quiet, catch up on the discussion, an
 Requires Rust 1.98 or newer.
 
 ```bash
-cargo install --git https://github.com/shard77/crabwalk
+cargo install --locked --git https://github.com/shard77/crabwalk
 ```
 
 ## Usage
