@@ -86,7 +86,12 @@ jobs:
       - name: Generate release notes
         env:
           RELEASE_TAG: ${{ github.ref_name }}
-        run: nix develop --command cog changelog --at "$RELEASE_TAG" --template full_hash > release-notes.md
+        # Redirect only Cocogitto's output, after the Nix shell hook has run.
+        run: |
+          nix develop --command bash -s -- "$RELEASE_TAG" <<'SCRIPT'
+          set -euo pipefail
+          cog changelog --at "$1" --template full_hash > release-notes.md
+          SCRIPT
 
       - name: Publish GitHub release
         env:
