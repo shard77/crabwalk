@@ -1,13 +1,20 @@
 # Changelog
 
 - - -
-## [v0.1.0](https://github.com/shard77/crabwalk/compare/684e3bfef5586066aba9b09a3f7d82095ce4075e..v0.1.0) - 2026-11-02
+## [v0.1.0](https://github.com/shard77/crabwalk/compare/684e3bfef5586066aba9b09a3f7d82095ce4075e..v0.1.0) - 2026-11-03
 #### Features
 - (**ci**) add cocogitto checks and release CI - ([60faeb4](https://github.com/shard77/crabwalk/commit/60faeb4ed1a9b71fef07878850bd0362957c839b)) - shard7
 #### Bug Fixes
+- (**release**) exclude Nix shell logs from generated release notes - ([8e4a77d](https://github.com/shard77/crabwalk/commit/8e4a77d8b6a06c9c24872e48a4b9952ac4f2fc4c)) - shard7
 - (**release**) initialize Cocogitto changelog format - ([dc5b99f](https://github.com/shard77/crabwalk/commit/dc5b99f1eee18109c875dce3f5ab3f0c95eb2feb)) - shard7
 - update README to properly point to repo link - ([372ceef](https://github.com/shard77/crabwalk/commit/372ceefa8d94df4f0dffa44600fb0d0a5f43fe5a)) - shard
+#### Refactoring
+- (**ci**) separate workflows - ([64913d7](https://github.com/shard77/crabwalk/commit/64913d76044adc618d573a9376d46de0c507d41c)) - shard7
+- (**ci/release**) produce raw binaries instead of compressed archive - ([fc80128](https://github.com/shard77/crabwalk/commit/fc8012803aebac09f80297458a11b1f6fbd03446)) - shard7
 #### Miscellaneous Chores
+- (**version**) v0.1.0 - ([93e5698](https://github.com/shard77/crabwalk/commit/93e5698243cdcfe4a3d7b7696b8b0ab6268ecc8f)) - shard7
+- small README.md adjustments - ([1b73d2c](https://github.com/shard77/crabwalk/commit/1b73d2ce6954f4e3f8d2cbb358224156a58b741a)) - shard
+- update README.md to reflect distribution changes - ([2720ae5](https://github.com/shard77/crabwalk/commit/2720ae53f62e8d43275bfbee7f3fc140802c1096)) - shard
 - add GPLv3 license - ([ae050df](https://github.com/shard77/crabwalk/commit/ae050dfcdd6a3d146b9026bb24e528cf7129d261)) - shard7
 - initial commit - ([684e3bf](https://github.com/shard77/crabwalk/commit/684e3bfef5586066aba9b09a3f7d82095ce4075e)) - shard
 
