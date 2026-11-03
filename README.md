@@ -8,6 +8,8 @@ crabwalk helps you find PRs that have gone quiet, catch up on the discussion, an
 
 <br clear="left">
 
+![Pull request list with filters and a detail preview](assets/screenshots/pr-list-view.png)
+
 ## Installation
 
 ### Build via cargo
@@ -35,10 +37,6 @@ Run `crabwalk` in your terminal.
 - **Markdown reader.** Read formatted Markdown with syntax-highlighted code, expand code blocks, and follow links. Search within the selected section, jump between matches, select characters or lines, and copy text to the clipboard.
 - **Triage reports.** Collect PRs, add or edit notes, and remove entries as you work. See summary counts and inactivity statistics, then copy a weekly report as Zulip Markdown or plain text, grouped by status label and sorted by inactivity.
 
-## License
-
-crabwalk is licensed under the [GNU General Public License v3.0](LICENSE).
-
 ## Contributors
 
 Contributions are welcome. Before submitting a pull request:
@@ -51,10 +49,6 @@ Thanks to everyone who contributes code, documentation, bug reports, and ideas. 
 
 ## Screenshots
 
-### Pull request list
-
-![Pull request list with filters and a detail preview](assets/screenshots/pr-list-view.png)
-
 ### Pull request details
 
 ![PR detail](assets/screenshots/pr-detail-view.png)
@@ -62,3 +56,7 @@ Thanks to everyone who contributes code, documentation, bug reports, and ideas. 
 ### Triage report
 
 ![Report](assets/screenshots/report-view.png)
+
+## License
+
+crabwalk is licensed under the [GNU General Public License v3.0](LICENSE).
