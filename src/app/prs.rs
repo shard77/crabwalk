@@ -1,27 +1,6 @@
 use super::{App, DetailState};
 use crate::types::{FilterSpec, PrSummary, QuickFilter};
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum FilterMenuAction {
-    Label,
-    Author,
-    InactiveDays,
-    InactivitySort,
-    Drafts,
-    Preset(usize),
-    SavePreset,
-    SetDefault,
-    DeletePreset,
-}
-
-pub fn filter_menu_items(app: &App) -> Vec<FilterMenuAction> {
-    use FilterMenuAction::*;
-    let mut items = vec![Label, Author, InactiveDays, InactivitySort, Drafts];
-    items.extend((0..app.main.quick_filters.len()).map(Preset));
-    items.extend([SavePreset, SetDefault, DeletePreset]);
-    items
-}
-
 pub struct MainState {
     pub nerd_font: bool,
     pub quick_filters: Vec<QuickFilter>,
@@ -104,6 +83,28 @@ impl MainState {
 }
 
 impl App {
+    pub fn open_selected_pr_detail(&mut self) {
+        if let Some(pr) = self.main.selected_pr() {
+            let number = pr.number;
+            if self.main.detail.snapshot().is_none() {
+                self.load_detail(number);
+            }
+            self.enter_detail_fullscreen();
+        }
+    }
+
+    pub fn edit_selected_pr_note(&mut self) {
+        if let Some(pr) = self.main.selected_pr() {
+            self.edit_report_note(pr.number);
+        }
+    }
+
+    pub fn open_selected_pr_in_browser(&self) {
+        if let Some(pr) = self.main.selected_pr() {
+            let _ = open::that(&pr.html_url);
+        }
+    }
+
     pub fn apply_filter_and_reload(&mut self) {
         self.main.set_custom_filter();
         self.apply_pr_filter();

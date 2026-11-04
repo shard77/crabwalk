@@ -99,6 +99,17 @@ pub struct ContextDropdown {
 }
 
 impl App {
+    pub fn open_dropdown_for(&mut self, action: ContextAction) {
+        let (start, end) = self
+            .context
+            .regions
+            .iter()
+            .find(|(_, _, candidate)| *candidate == action)
+            .map(|(start, end, _)| (*start, *end))
+            .unwrap_or((0, 20));
+        self.open_context_dropdown(action, start, end);
+    }
+
     pub fn resume_filter_menu(&mut self) {
         if matches!(self.modal, Modal::None)
             && self.context.dropdown.is_none()

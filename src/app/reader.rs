@@ -2,7 +2,9 @@ use super::App;
 use crate::markdown::{self, RenderedDocument};
 use std::collections::HashSet;
 
-pub(crate) mod navigation;
+mod actions;
+pub(crate) use actions::ReaderAction;
+mod navigation;
 pub use navigation::SearchMatch;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -30,6 +32,28 @@ pub struct ReaderState {
 }
 
 impl ReaderState {
+    pub fn cancel_search(&mut self) {
+        self.mode = ReaderMode::Normal;
+        self.search_query.clear();
+        self.search_matches.clear();
+    }
+
+    pub fn submit_search(&mut self) {
+        let (matches, index) = navigation::find_search_matches(
+            &self.rendered.plain_lines,
+            &self.search_query,
+            self.cursor,
+        );
+        if let Some(found) = matches.get(index) {
+            self.cursor = found.start;
+            self.focused_element =
+                navigation::interactive_element_at_line(&self.rendered.interactive, self.cursor.0);
+        }
+        self.search_matches = matches;
+        self.search_match_index = index;
+        self.mode = ReaderMode::Normal;
+    }
+
     pub fn start_search(&mut self) {
         self.pending_prefix = None;
         self.mode = ReaderMode::Search;

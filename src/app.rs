@@ -5,6 +5,7 @@ mod detail_cache;
 mod detail_load;
 mod events;
 mod feedback;
+mod filter;
 mod loading;
 mod prs;
 pub(crate) mod reader;
@@ -15,9 +16,9 @@ pub use context::{ContextAction, ContextBarState, LabelState};
 pub use detail::{CompactDetailCache, DetailExpansion, DetailState, FullscreenCache};
 pub use events::AppEvent;
 pub use feedback::{FeedbackState, HelpState};
+pub use filter::{FilterMenuAction, filter_menu_items};
 pub use loading::BackgroundWork;
 pub use prs::MainState;
-pub use prs::{FilterMenuAction, filter_menu_items};
 pub use reader::{ReaderMode, ReaderState};
 pub use report::ReportState;
 pub use settings::{QuickFilterField, TokenField};
@@ -171,6 +172,15 @@ impl App {
             focus.pending_prefix = None;
         }
         self.modal = Modal::Help;
+    }
+
+    pub fn switch_view(&mut self, view: View) {
+        if self.navigation.view == View::Settings && view != View::Settings {
+            self.cancel_settings_quick_filter();
+            self.cancel_settings_token();
+        }
+        self.navigation.view = view;
+        self.context.focused = None;
     }
 
     pub fn copy_to_clipboard(&mut self, text: &str, confirmation: &str) {

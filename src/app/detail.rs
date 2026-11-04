@@ -5,6 +5,7 @@ use std::cell::OnceCell;
 use std::collections::HashSet;
 
 mod expansion;
+mod navigation;
 pub(super) use expansion::DetailEntry;
 pub use expansion::DetailExpansion;
 use expansion::ExpandedEntry;

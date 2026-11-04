@@ -1,4 +1,4 @@
-use super::App;
+use super::{App, DeletionTarget, Modal};
 use crate::types::TriageLabel;
 use chrono::{Datelike, Duration, Utc};
 use std::collections::{BTreeMap, HashSet};
@@ -64,6 +64,64 @@ impl ReportState {
 }
 
 impl App {
+    pub fn delete_report_entry(&mut self, number: u64) {
+        if let Some(index) = self
+            .report
+            .entries
+            .iter()
+            .position(|entry| entry.pr_number == number)
+        {
+            self.report.selected = index;
+            self.report.delete_selected();
+            self.set_status_message(format!("Removed #{number} from report"));
+        }
+    }
+
+    pub fn save_report_note(&mut self, pr_number: u64, text: String) {
+        if let Some(entry) = self
+            .report
+            .entries
+            .iter_mut()
+            .find(|entry| entry.pr_number == pr_number)
+        {
+            entry.note = text;
+            self.set_status_message(format!("Updated note for #{pr_number}"));
+        } else if self
+            .main
+            .selected_pr()
+            .is_some_and(|pr| pr.number == pr_number)
+        {
+            self.add_to_report(text);
+        } else {
+            self.modal = Modal::Error("The PR changed while editing; note was not applied.".into());
+        }
+    }
+
+    pub fn edit_report_note(&mut self, pr_number: u64) {
+        let text = self
+            .report
+            .entries
+            .iter()
+            .find(|entry| entry.pr_number == pr_number)
+            .map(|entry| entry.note.clone())
+            .unwrap_or_default();
+        self.modal = Modal::NoteEditor { pr_number, text };
+    }
+
+    pub fn edit_selected_report_note(&mut self) {
+        if let Some(entry) = self.report.selected_entry() {
+            self.edit_report_note(entry.pr_number);
+        }
+    }
+
+    pub fn confirm_report_entry_deletion(&mut self) {
+        if let Some(entry) = self.report.selected_entry() {
+            self.modal = Modal::ConfirmDelete {
+                target: DeletionTarget::ReportEntry(entry.pr_number),
+            };
+        }
+    }
+
     pub fn copy_report(&mut self) {
         let text = format_report(&self.report.entries, &self.report.format);
         self.copy_to_clipboard(&text, "Copied!");

@@ -156,8 +156,8 @@ fn handle_key_inner(app: &mut App, key: KeyEvent) {
         Modal::ConfirmDelete { target } => {
             match key.code {
                 KeyCode::Enter => match target {
-                    DeletionTarget::ReportEntry(number) => report::delete_entry(app, number),
-                    DeletionTarget::QuickFilter(index) => filter::delete_quick_filter(app, index),
+                    DeletionTarget::ReportEntry(number) => app.delete_report_entry(number),
+                    DeletionTarget::QuickFilter(index) => app.delete_quick_filter(index),
                 },
                 KeyCode::Esc => {}
                 _ => app.modal = Modal::ConfirmDelete { target },
@@ -191,22 +191,7 @@ fn handle_key_inner(app: &mut App, key: KeyEvent) {
         app.navigation.pending_prefix = false;
 
         if let Some(key) = reader::translate_key(app, key) {
-            let was_search = app
-                .main
-                .detail
-                .reader
-                .as_ref()
-                .is_some_and(|reader| reader.mode == crate::app::ReaderMode::Search);
             reader::handle_reader_key(app, key);
-            let still_search = app
-                .main
-                .detail
-                .reader
-                .as_ref()
-                .is_some_and(|reader| reader.mode == crate::app::ReaderMode::Search);
-            if !was_search || !still_search {
-                app.main.detail.fullscreen_cache = None;
-            }
         }
         return;
     }
@@ -233,16 +218,11 @@ fn handle_key_inner(app: &mut App, key: KeyEvent) {
                 return;
             }
             KeyCode::Char('1' | '2' | '3') => {
-                if app.navigation.view == View::Settings && key.code != KeyCode::Char('3') {
-                    app.cancel_settings_quick_filter();
-                    app.cancel_settings_token();
-                }
-                app.navigation.view = match key.code {
+                app.switch_view(match key.code {
                     KeyCode::Char('1') => View::Main,
                     KeyCode::Char('2') => View::Report,
                     _ => View::Settings,
-                };
-                app.context.focused = None;
+                });
                 return;
             }
             _ => {}
@@ -342,10 +322,9 @@ fn handle_context_bar_key(app: &mut App, key: KeyEvent) -> bool {
         KeyCode::Enter | KeyCode::Char(' ') => {
             let action = app.context.regions[index].2;
             if matches!(action, ContextAction::ToggleDrafts) {
-                app.main.filter.show_drafts = !app.main.filter.show_drafts;
-                app.apply_filter_and_reload();
+                app.toggle_drafts();
             } else if key.code == KeyCode::Enter {
-                open_dropdown_for(app, action);
+                app.open_dropdown_for(action);
             }
         }
         KeyCode::Down | KeyCode::Esc => app.context.focused = None,
@@ -354,15 +333,4 @@ fn handle_context_bar_key(app: &mut App, key: KeyEvent) -> bool {
         _ => return false,
     }
     true
-}
-
-pub fn open_dropdown_for(app: &mut App, action: ContextAction) {
-    let (start, end) = app
-        .context
-        .regions
-        .iter()
-        .find(|(_, _, candidate)| *candidate == action)
-        .map(|(start, end, _)| (*start, *end))
-        .unwrap_or((0, 20));
-    app.open_context_dropdown(action, start, end);
 }
