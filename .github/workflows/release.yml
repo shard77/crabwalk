@@ -84,7 +84,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - uses: cachix/install-nix-action@v31
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           pattern: crabwalk-*
           path: dist
