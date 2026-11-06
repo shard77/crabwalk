@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           # Validate the PR's actual history, excluding GitHub's synthetic merge.
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
