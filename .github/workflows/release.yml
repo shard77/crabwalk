@@ -41,7 +41,7 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-      - uses: cachix/install-nix-action@v31
+      - uses: cachix/install-nix-action@v32
 
       - name: Verify tag matches package version
         env:
@@ -83,7 +83,7 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-      - uses: cachix/install-nix-action@v31
+      - uses: cachix/install-nix-action@v32
       - uses: actions/download-artifact@v8
         with:
           pattern: crabwalk-*
